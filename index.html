@@ -128,7 +128,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    9 minutes read (About 1371 words)
+                    9 minutes read (About 1372 words)
                 </span>
                 
                 
@@ -141,100 +141,17 @@
             
         </h1>
         <div class="content">
-            <h2 id="通过docker安装nextcloud＋onlyoffice＋mysql并配置ip地址ssl"><a href="#通过docker安装nextcloud＋onlyoffice＋mysql并配置ip地址ssl" class="headerlink" title="通过docker安装nextcloud＋onlyoffice＋mysql并配置ip地址ssl"></a>通过docker安装nextcloud＋onlyoffice＋mysql并配置<code>ip地址</code>ssl</h2><h2 id="主要内容"><a href="#主要内容" class="headerlink" title="主要内容"></a>主要内容</h2><ol>
-<li>通过docker安装nextcloud＋onlyoffice＋mysql</li>
-<li>配置通过<a href="https://192.168.9.51">https://192.168.9.51</a> 登陆(<strong>其中<code>192.168.9.51</code>为演示IP地址，你需要修改为你实际IP地址</strong>)</li>
-<li>配置 SSL 自签名</li>
-<li>最终实现通过<a href="https://192.168.9.51">https://192.168.9.51</a> 来访问服务器，避免出现ssl不可信的情况<h2 id="系统要求"><a href="#系统要求" class="headerlink" title="系统要求"></a>系统要求</h2></li>
-</ol>
-<ul>
-<li>系统: Centos7</li>
-<li>内存: 2G 以上</li>
-<li>硬盘: 10G 以上<h2 id="系统初始化"><a href="#系统初始化" class="headerlink" title="系统初始化"></a>系统初始化</h2><blockquote>
-<p>关闭selinux，自动更新时间，停止firewalld</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">setenforce 0</span><br><span class="line">sed -i &quot;s&#x2F;SELINUX&#x3D;enforcing&#x2F;SELINUX&#x3D;disabled&#x2F;g&quot; &#x2F;etc&#x2F;selinux&#x2F;config</span><br><span class="line">yum -y install ntp</span><br><span class="line">service ntpd restart</span><br><span class="line">cp -rf &#x2F;usr&#x2F;share&#x2F;zoneinfo&#x2F;Asia&#x2F;Shanghai &#x2F;etc&#x2F;localtime</span><br><span class="line">cd &#x2F;root</span><br><span class="line">echo &#39;0-59&#x2F;10 * * * * &#x2F;usr&#x2F;sbin&#x2F;ntpdate -u cn.pool.ntp.org&#39; &gt;&gt; &#x2F;root&#x2F;crontab.back</span><br><span class="line">crontab &#x2F;root&#x2F;crontab.back</span><br><span class="line">systemctl restart crond</span><br><span class="line">yum install net-tools -y</span><br><span class="line">yum install epel-release -y</span><br><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl disable firewalld</span><br><span class="line">yum install lynx wget expect iptables -y</span><br></pre></td></tr></table></figure>
-<h2 id="1、安装程序-install-processing"><a href="#1、安装程序-install-processing" class="headerlink" title="1、安装程序[install processing]"></a>1、安装程序[install processing]</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#安装 docker 相关程序</span><br><span class="line">yum install git docker docker-compose -y</span><br><span class="line">#运行docker</span><br><span class="line">service docker start</span><br><span class="line">#设置docker开机启动</span><br><span class="line">systemctl enable docker</span><br><span class="line">#安装nextcloud</span><br><span class="line">cd &#x2F;root&#x2F;</span><br><span class="line">git clone --recursive https:&#x2F;&#x2F;github.com&#x2F;tvollscw&#x2F;docker-onlyoffice-nextcloud-mysql</span><br><span class="line">cd docker-onlyoffice-nextcloud-mysql</span><br><span class="line">vi docker-compose.yml</span><br><span class="line">#修改其中的 51、52行中的mysql密码 [edit 51 and 52 mysql password]</span><br><span class="line">git submodule update --remote</span><br><span class="line">#运行 Docker Compose: [start docker]</span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>打开浏览器输入服务器IP地址，<a href="http://your_ip_address">http://your_ip_address</a> 在出现的配置页面中输入</p>
-<ul>
-<li>用户名：admin，管理密码</li>
-<li>数据库选择mysql，数据库的帐号、密码、数据库名、数据库地址信息，见docker-compose.yml 文件</li>
-<li>注意：配置的数据库地址localhost 为mariadb</li>
-</ul>
-</blockquote>
-</li>
-</ul>
-<hr>
-<blockquote>
-<p>配置完成之后，开启onlyoffice支持 [when u finish config webpage, u can use command support onluoffice support]</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;root&#x2F;docker-onlyoffice-nextcloud-mysql&#x2F;</span><br><span class="line">bash set_configuration.sh</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>打开浏览器<a href="http://your_ip_address">http://your_ip_address</a>  通过上面配置的admin帐号和密码进行登陆<br><strong>如果不需要通过域名访问，或者https访问，到此配置成功，您可以使用了</strong>[All processing down if u don’t need use doman to access or https]</p>
-</blockquote>
-<h3 id="文件位置说明-document-path"><a href="#文件位置说明-document-path" class="headerlink" title="文件位置说明 [document path]"></a>文件位置说明 [document path]</h3><ul>
-<li>nginx配置文件[nginx config path]<br>/root/docker-onlyoffice-nextcloud-mysql/nginx.conf</li>
-<li>nextcloud数据存储位置[nextcloud config path]<br>/var/lib/docker/volumes/dockeronlyofficenextcloudmysql_app_data/_data</li>
-</ul>
-<hr>
-<h2 id="以上将搭建好-http-方式的nextcloud-，如果想通过https-访问，请继续下面的教程-top-all-commands-are-for-http-access-if-u-need-https-keep-going-below-command"><a href="#以上将搭建好-http-方式的nextcloud-，如果想通过https-访问，请继续下面的教程-top-all-commands-are-for-http-access-if-u-need-https-keep-going-below-command" class="headerlink" title="以上将搭建好 http 方式的nextcloud ，如果想通过https 访问，请继续下面的教程 [top all commands are for http access,if u need https keep going below command]"></a>以上将搭建好 http 方式的nextcloud ，如果想通过https 访问，请继续下面的教程 [top all commands are for http access,if u need https keep going below command]</h2><hr>
-<h2 id="制作自签名证书-make-cert-by-yourself"><a href="#制作自签名证书-make-cert-by-yourself" class="headerlink" title="制作自签名证书 [make cert by yourself]"></a>制作自签名证书 [make cert by yourself]</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it app-server bash</span><br><span class="line">mkdir cert</span><br><span class="line">openssl req -new -x509 -days 365 -nodes -out .&#x2F;cert&#x2F;nextcloud.crt -keyout .&#x2F;cert&#x2F;nextcloud.key</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>会出现如下提示,根据提示输入省份、组织、邮箱地址等[it show some prompt , depend on prompt u need to type some information like address]</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Generating a RSA private key</span><br><span class="line">...................................+++++</span><br><span class="line">................................+++++</span><br><span class="line">writing new private key to &#39;.&#x2F;cert&#x2F;nextcloud.key&#39;</span><br><span class="line">-----</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter &#39;.&#39;, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Country Name (2 letter code) [AU]:cn</span><br><span class="line">State or Province Name (full name) [Some-State]:bj</span><br><span class="line">Locality Name (eg, city) []:bj</span><br><span class="line">Organization Name (eg, company) [Internet Widgits Pty Ltd]:ramu</span><br><span class="line">Organizational Unit Name (eg, section) []:ramu</span><br><span class="line">Common Name (e.g. server FQDN or YOUR name) []:ramu</span><br><span class="line">Email Address []:zcm8483@gmail.com</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>退出 app-server docker ，并拷贝生成的证书到本地 [exit , and copy cert to local path]</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">exit</span><br><span class="line">cd &#x2F;root&#x2F;docker-onlyoffice-nextcloud-mysql&#x2F;</span><br><span class="line">docker container cp app-server:&#x2F;var&#x2F;www&#x2F;html&#x2F;cert .&#x2F;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>修改docker-compose 文件，映射本地证书文件夹到docker 的nginx下[edit docker-compose document , mapping local cert folder to nginx of docker]<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;root&#x2F;docker-onlyoffice-nextcloud-mysql&#x2F;</span><br><span class="line">vi docker-compose.yml</span><br></pre></td></tr></table></figure></li>
-<li>在nginx 的volumes 下面增加目录映射，如下所示最后一行[for example u can add last example command under docker-compose.yml &gt; volumes: for mapping of path]<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nginx:</span><br><span class="line">     volumes:</span><br><span class="line">      - .&#x2F;cert:&#x2F;etc&#x2F;nginx&#x2F;cert</span><br></pre></td></tr></table></figure></li>
-<li>修改nginx 配置文件，配置ssl证书[go to edit nginx config to config ssl cert]<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;root&#x2F;docker-onlyoffice-nextcloud-mysql&#x2F;nginx.conf</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p> （1）在server部分做如下改动，ssl 开头的三行内容是增加的[u can find server part command,u can see our example ,three of tittle of  ssl_ you need to add by yourself]</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">      listen 443 ssl;</span><br><span class="line">      server_name 192.168.9.51;</span><br><span class="line">      ssl_certificate &#x2F;etc&#x2F;nginx&#x2F;cert&#x2F;nextcloud.crt;</span><br><span class="line">      ssl_certificate_key &#x2F;etc&#x2F;nginx&#x2F;cert&#x2F;nextcloud.key;</span><br><span class="line">      ssl_protocols TLSv1 TLSv1.1 TLSv1.2;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<blockquote>
-<p>（2）然后在倒数第二行增加如下内容目的是为了访问http 的时候自动跳转到https[and then add this two command for that when someone access http it will auto go to https]</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">           listen 80;</span><br><span class="line">           server_name 192.168.9.51;</span><br><span class="line">           return 301 https:&#x2F;&#x2F;$host$request_uri;</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>修改 nextcloud 配置文件[edit nextcloud config]<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi &#x2F;var&#x2F;lib&#x2F;docker&#x2F;volumes&#x2F;dockeronlyofficenextcloudmysql_app_data&#x2F;_data&#x2F;config&#x2F;config.php</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>修改其中的30、43行，为你的nextcloud 访问地址<a href="https://192.168.9.51">https://192.168.9.51</a> [edit line 30 and 43 for ur access address for example:]<br>array (<br>  0 =&gt; ‘192.168.9.51’,<br>  1 =&gt; ‘nginx-server’,<br>),<br>‘datadirectory’ =&gt; ‘/var/www/html/data’,<br>‘dbtype’ =&gt; ‘mysql’,<br>‘version’ =&gt; ‘15.0.0.10’,<br>‘overwrite.cli.url’ =&gt; ‘<a href="https://192.168.9.51&#39;">https://192.168.9.51&#39;</a>,</p>
-</blockquote>
-</li>
-</ul>
-<h2 id="修改onlyoffice-的default-json-文件，信任不可信的ssl-edit-onlyoffice-default-json-document-for-trust-or-not-trust-ssl"><a href="#修改onlyoffice-的default-json-文件，信任不可信的ssl-edit-onlyoffice-default-json-document-for-trust-or-not-trust-ssl" class="headerlink" title="修改onlyoffice 的default.json 文件，信任不可信的ssl [edit onlyoffice default.json document for trust or not trust ssl]"></a>修改onlyoffice 的default.json 文件，信任不可信的ssl [edit onlyoffice default.json document for trust or not trust ssl]</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker container cp onlyoffice-document-server:&#x2F;etc&#x2F;onlyoffice&#x2F;documentserver&#x2F;default.json .&#x2F;</span><br><span class="line">vi default.json</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>修改”rejectUnauthorized”: true 为”rejectUnauthorized”: false[edit command rejectUnauthorized”: true to “rejectUnauthorized”: false]</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi docker-compose.yml</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>在onlyoffice-document-server 的volumes 部分增加最后一行 [go to add one line command in end of volumes: part in docker-compose.yml]</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">onlyoffice-document-server:</span><br><span class="line">    container_name: onlyoffice-document-server</span><br><span class="line">    image: onlyoffice&#x2F;documentserver:latest</span><br><span class="line">    stdin_open: true</span><br><span class="line">    tty: true</span><br><span class="line">    restart: always</span><br><span class="line">    networks:</span><br><span class="line">      - onlyoffice</span><br><span class="line">    expose:</span><br><span class="line">      - &#39;80&#39;</span><br><span class="line">      - &#39;443&#39;</span><br><span class="line">    volumes:</span><br><span class="line">      - document_data:&#x2F;var&#x2F;www&#x2F;onlyoffice&#x2F;Data</span><br><span class="line">      - document_log:&#x2F;var&#x2F;log&#x2F;onlyoffice</span><br><span class="line">      - .&#x2F;default.json:&#x2F;etc&#x2F;onlyoffice&#x2F;documentserver&#x2F;default.json</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>重启docker-compose[reopen docker-compose]</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;root&#x2F;docker-onlyoffice-nextcloud-mysql&#x2F;</span><br><span class="line">docker-compose down</span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure></li>
-<li><p><em>注意:用docker-compose restart 是不能加载分区的 *</em></p>
-</li>
-<li><p>通过浏览器登陆 nextcloud 修改onlyoffice 配置[use Browser to login extcloud and change onlyoffice config]</p>
-<blockquote>
-<p>到设置中选择onlyoffice，打开onlyoffice api 页面 [go to setting find onlyoffice api and turn open]<br>把Server address for internet requests form the Document Editing Src，修改为你的nextcloud 访问地址<a href="https://192.168.9.51[change">https://192.168.9.51[change</a> Server address for internet requests form the Document Editing Src to ur access address]<br>最后点击保存[save!]</p>
-</blockquote>
-</li>
-</ul>
-
+            Here's something encrypted, password is required to continue reading.
         </div>
         
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/fullstack/2020/04/29/office/#more">Read More</a>
+                </div>
+            </div>
+        </div>
         
         
     </div>
